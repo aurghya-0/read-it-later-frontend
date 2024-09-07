@@ -76,5 +76,5 @@ app.get("/article/:id", (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${3090}`);
 });
