@@ -1,18 +1,27 @@
-const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
+import express from 'express';
+import path from 'path';
+import { openDb } from './src/database.js';
+import bodyParser from 'body-parser';
+import sqlite3 from 'sqlite3';
+import { fileURLToPath } from 'url';
+import { homedir } from 'os';
+import { getArticle } from './src/article.js';
+import * as cheerio from 'cheerio';
+
 const app = express();
-const port = 3090;
+const port = 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Set EJS as the templating engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
+app.use(bodyParser.urlencoded({ extended: false }));
 // Serve static files (like Tailwind CSS)
 app.use(express.static(path.join(__dirname, "public")));
 
 // Create and connect to SQLite database
-const db = new sqlite3.Database("/Users/aurghyadip/.config/article/storage.db");
+const db = new sqlite3.Database(`${homedir()}/.config/article/storage.db`);
 
 // Utility function to format date from ISO 8601 to DD-MM-YYYY
 function formatDate(isoDate) {
@@ -59,6 +68,78 @@ app.get("/category/:category", (req, res) => {
   );
 });
 
+app.get('/add-article', (req, res) => {
+  res.render('addArticle');
+});
+
+app.post('/add-article', async (req, res) => {
+  const articleLink = req.body.articleLink;
+
+  try {
+    // Fetch the article content from the provided link
+    const response = await fetch(articleLink);
+    const html = await response.text();
+
+    // Parse the HTML using Cheerio (for title, content, author, etc.)
+    const $ = cheerio.load(html);
+    const content = $('body').html() || 'No content found';
+    getArticle(content).then((article) => {
+      db.run(
+        'INSERT INTO article (title, classification, author, publish_date, article_text, article_link) VALUES (?, ?, ?, ?, ?, ?)',
+        [article.title, article.classification, article.author, article.publish_date, article.article_text, articleLink],
+        (err) => {
+          if (err) {
+            console.error('Error saving article:', err);
+            res.status(500).send('Error saving article');
+          } else {
+            res.redirect('/');
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    res.status(500).send('Error fetching article');
+  }
+});
+
+
+app.post('/api/articles', async (req, res) => {
+  const { articleLink } = req.body;
+
+  if (!articleLink) {
+    return res.status(400).json({ error: 'Article link is required' });
+  }
+
+  try {
+    // Fetch the article content from the provided link
+    const response = await fetch(articleLink);
+    const html = await response.text();
+
+    // Parse the HTML using Cheerio (for title, content, author, etc.)
+    const $ = cheerio.load(html);
+    const content = $('body').html() || 'No content found';
+    const article = getArticle(content);
+
+    // Insert the article into the database
+    db.run(
+      'INSERT INTO article (title, classification, author, publish_date, article_text, article_link) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [article.title, article.classification, article.author, article.publish_date, article.article_text, articleLink],
+      (err) => {
+        if (err) {
+          console.error('Error saving article:', err);
+          return res.status(500).json({ error: 'Error saving article' });
+        }
+
+        res.status(201).json({ message: 'Article added successfully' });
+      }
+    );
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    res.status(500).json({ error: 'Error fetching article' });
+  }
+});
+
 app.get("/article/:id", (req, res) => {
   const id = req.params.id;
   db.get("SELECT * FROM article WHERE id = ?", [id], (err, row) => {
@@ -76,5 +157,5 @@ app.get("/article/:id", (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${3090}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
