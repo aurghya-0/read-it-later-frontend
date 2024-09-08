@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import { openDb } from './src/database.js';
 import bodyParser from 'body-parser';
 import sqlite3 from 'sqlite3';
 import { fileURLToPath } from 'url';
@@ -13,12 +12,14 @@ const port = 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Set EJS as the templating engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.urlencoded({ extended: false }));
-// Serve static files (like Tailwind CSS)
 app.use(express.static(path.join(__dirname, "public")));
+app.use((req, res, next) => {
+  res.locals.currentRoute = req.path;
+  next();
+});
 
 // Create and connect to SQLite database
 const db = new sqlite3.Database(`${homedir()}/.config/article/storage.db`);
@@ -74,29 +75,25 @@ app.get('/add-article', (req, res) => {
 
 app.post('/add-article', async (req, res) => {
   const articleLink = req.body.articleLink;
-
   try {
-    // Fetch the article content from the provided link
     const response = await fetch(articleLink);
     const html = await response.text();
 
-    // Parse the HTML using Cheerio (for title, content, author, etc.)
     const $ = cheerio.load(html);
     const content = $('body').html() || 'No content found';
-    getArticle(content).then((article) => {
-      db.run(
-        'INSERT INTO article (title, classification, author, publish_date, article_text, article_link) VALUES (?, ?, ?, ?, ?, ?)',
-        [article.title, article.classification, article.author, article.publish_date, article.article_text, articleLink],
-        (err) => {
-          if (err) {
-            console.error('Error saving article:', err);
-            res.status(500).send('Error saving article');
-          } else {
-            res.redirect('/');
-          }
+    const article = await getArticle(content);
+    db.run(
+      'INSERT INTO article (title, classification, author, publish_date, article_text, article_link) VALUES (?, ?, ?, ?, ?, ?)',
+      [article.title, article.classification, article.author, article.publish_date, article.article_text, articleLink],
+      (err) => {
+        if (err) {
+          console.error('Error saving article:', err);
+          res.status(500).send('Error saving article');
+        } else {
+          res.redirect('/');
         }
-      );
-    });
+      }
+    );
   } catch (error) {
     console.error('Error fetching article:', error);
     res.status(500).send('Error fetching article');
