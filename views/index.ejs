@@ -7,7 +7,6 @@
           <tr>
             <th class="py-3 px-4 border-b">Title</th>
             <th class="py-3 px-4 border-b">Category</th>
-            <th class="py-3 px-4 border-b">Publish Date</th>
             <th class="py-3 px-4 border-b">Author</th>
           </tr>
         </thead>
@@ -16,7 +15,6 @@
             <tr class="border-b">
               <td class="py-3 px-4"><a href="/article/<%= article.id %>" class="text-blue-500 hover:underline"><%= article.title %></a></td>
               <td class="py-3 px-4 text-blue-500"><%= article.classification %></td>
-              <td class="py-3 px-4 text-green-500"><%= article.publish_date %></td>
               <td class="py-3 px-4 text-indigo-500"><%= article.author %></td>
             </tr>
           <% }) %>
