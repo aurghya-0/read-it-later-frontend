@@ -1,9 +1,17 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [],
+export default {
+  content: [
+    "./public/**/*.{js,css}",
+    "./views/**/*.ejs",
+  ],
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/container-queries'),
+    require('@tailwindcss/aspect-ratio')
+  ],
 }
 
