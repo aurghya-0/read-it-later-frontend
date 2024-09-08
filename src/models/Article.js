@@ -1,8 +1,6 @@
-// src/models/Article.js
 import { DataTypes } from 'sequelize';
 import sequelize from './index.js';
 
-// Define the Article model
 const Article = sequelize.define('Article', {
   title: {
     type: DataTypes.STRING,

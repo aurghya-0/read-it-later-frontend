@@ -3,12 +3,10 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url';
 import routes from './src/routes.js';
-import apiRoutes from './src/apiRoutes.js';  // Your API routes
+import apiRoutes from './src/apiRoutes.js';
 import sequelize from './src/models/index.js';
 
-// Initialize Sequelize and sync the database
 sequelize.sync();
-
 
 const app = express();
 const port = 3000;
@@ -24,10 +22,8 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/", routes);
-app.use("/api", apiRoutes);  // Add API routes
+app.use("/api", apiRoutes);
 
-
-// Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

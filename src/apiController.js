@@ -1,4 +1,3 @@
-// src/apiController.js
 import Article from './models/Article.js';
 import { formatDate } from './utils.js';
 import * as cheerio from 'cheerio';

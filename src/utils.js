@@ -1,4 +1,3 @@
-// src/utils.js
 export function formatDate(isoDate) {
     const date = new Date(isoDate);
     const day = String(date.getDate()).padStart(2, "0");
