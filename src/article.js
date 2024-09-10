@@ -13,12 +13,34 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 const Article = z.object({
-    title: z.string(),
     classification: z.string(),
-    author: z.string(),
-    publish_date: z.string(),
-    article_text: z.string()
+    article_html: z.string()
 });
+
+const newsCategories = [
+  "World News",
+  "Politics",
+  "Business",
+  "Technology",
+  "Science",
+  "Health",
+  "Entertainment",
+  "Sports",
+  "Education",
+  "Environment",
+  "Travel",
+  "Lifestyle",
+  "Finance",
+  "Opinion/Editorial",
+  "Startups",
+  "Automobile",
+  "Gaming",
+  "Food",
+  "Art & Culture",
+  "Local News"
+];
+
+const categoriesString = newsCategories.join(", ");
 
 export async function getArticle(articleHtml) {
     const completion = await openai.beta.chat.completions.parse({
@@ -27,7 +49,7 @@ export async function getArticle(articleHtml) {
         {
           role: "system",
           content:
-            "You are an article extractor who extracts article from scraped websites. Extract the article with title, author, publish date (in ISO 8601 format) and extract the text from the article and format it into HTML (also format the article as you see fit like adding bold italic or underline, table structured data, etc.) while removing all the advertisements and extra texts, links inside the article, also do not keep the title, author and publish date inside the article text. Also classify the article into a subcategory.",
+            `You are acting as a classifier and an advertisement remover from articles, I will supply you with HTML content, you identify which are the advertisement links and other texts which are not relevant to the article and remove them. Also classify the article into a subcategory from these [${categoriesString}].`,
         },
         {
           role: "user",
