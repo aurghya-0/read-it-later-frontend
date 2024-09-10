@@ -3,6 +3,7 @@ import Article from './models/Article.js';
 import { formatDate } from './utils.js';
 import * as cheerio from 'cheerio';
 import { getArticle } from './article.js';
+import articleQueue from './queue.js';
 
 export const getAllArticles = async (req, res) => {
   try {
@@ -66,20 +67,8 @@ export const getArticleById = async (req, res) => {
 export const addArticle = async (req, res) => {
   const articleLink = req.body.articleLink;
   try {
-    const response = await fetch(articleLink);
-    const html = await response.text();
-    const $ = cheerio.load(html);
-    const content = $('body').html() || 'No content found';
-    const article = await getArticle(content);
-
-    await Article.create({
-      title: article.title,
-      classification: article.classification,
-      author: article.author,
-      publish_date: article.publish_date,
-      article_text: article.article_text,
-      article_link: articleLink,
-    });
+    // Add a job to the queue
+    await articleQueue.add({ articleLink });
 
     res.redirect("/");
   } catch (error) {

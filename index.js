@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import routes from './src/routes.js';
 import apiRoutes from './src/apiRoutes.js';
 import sequelize from './src/models/index.js';
+import './src/articleProcessor.js';
+
 
 sequelize.sync();
 
