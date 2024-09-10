@@ -39,19 +39,6 @@ articleQueue.process(async (job) => {
       article_link: articleLink
     });
     
-    // const article = await getArticle(content);
-    // console.log("Saving Article to database");
-
-
-    // await Article.create({
-    //   title: article.title,
-    //   classification: article.classification,
-    //   author: article.author,
-    //   publish_date: article.publish_date,
-    //   article_text: article.article_text,
-    //   article_link: articleLink,
-    // });
-
     console.log(`${readArticle} added successfully`);
   } catch (error) {
     console.error('Error adding article:', error);
