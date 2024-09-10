@@ -1,8 +1,6 @@
 // src/controller.js
 import Article from './models/Article.js';
 import { formatDate } from './utils.js';
-import * as cheerio from 'cheerio';
-import { getArticle } from './article.js';
 import articleQueue from './queue.js';
 
 export const getAllArticles = async (req, res) => {
