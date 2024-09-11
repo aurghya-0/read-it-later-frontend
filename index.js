@@ -6,11 +6,14 @@ import routes from './src/routes.js';
 import apiRoutes from './src/apiRoutes.js';
 import sequelize from './src/models/index.js';
 import './src/articleProcessor.js';
-
+import http from 'http';
+import { initSocket } from './src/socket.js';
 
 sequelize.sync();
 
 const app = express();
+const server = http.createServer(app);
+initSocket(server);
 const port = 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,6 +29,6 @@ app.use((req, res, next) => {
 app.use("/", routes);
 app.use("/api", apiRoutes);
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+server.listen(port, () => {
+  console.log(`Server is running on port http://localhost:${port}`);
 });

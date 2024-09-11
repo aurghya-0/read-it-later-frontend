@@ -2,6 +2,10 @@
   <!-- Table Container -->
   <div class="container mx-auto p-6">
     <div class="overflow-x-auto">
+      <script src="/socket.io/socket.io.js"></script>
+      <div class="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3" role="alert">
+        <div id="status"></div>
+      </div>
       <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
         <thead class="bg-gray-800 text-white">
           <tr>
@@ -21,6 +25,25 @@
         </tbody>
       </table>
     </div>
+    <script>
+      const socket = io();
+
+      socket.on('articleProcessing', (data) => {
+          const statusDiv = document.getElementById('status');
+          if (data.status === 'started') {
+              statusDiv.innerHTML = `<p >Started processing article: ${data.articleLink}</p>`;
+          } else if (data.status === 'completed') {
+              statusDiv.innerHTML = `<p>Completed processing article: ${data.articleLink}</p>`;
+              location.reload();
+          }else if (data.status === 'database') {
+              statusDiv.innerHTML = `<p>Adding to database: ${data.articleLink}</p>`;
+          }else if (data.status === 'processing') {
+              statusDiv.innerHTML = `<p>Processing article: ${data.articleLink}</p>`;
+          } else if (data.status === 'error') {
+              statusDiv.innerHTML = `<p>Error processing article: ${data.articleLink}. Error: ${data.error}</p>`;
+          }
+      });
+  </script>
   </div>
 
 <%- include('partials/footer') %>
