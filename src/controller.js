@@ -4,12 +4,21 @@ import { formatDate } from './utils.js';
 import articleQueue from './queue.js';
 
 export const getAllArticles = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit to 10
+
   try {
-    const articles = await Article.findAll();
-    articles.forEach((article) => {
+    const offset = (page - 1) * limit;
+    const articles = await Article.findAndCountAll({
+      limit: parseInt(limit), // Limit the number of articles per page
+      offset: offset, // Skip the articles for previous pages
+    });
+
+    const totalPages = Math.ceil(articles.count / limit); // Calculate total pages
+    articles.rows.forEach(article => {
       article.publish_date = formatDate(article.publish_date);
     });
-    res.render("index", { articles });
+
+    res.render("index", { articles: articles.rows, totalPages, currentPage: page });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving articles");
