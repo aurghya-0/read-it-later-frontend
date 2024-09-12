@@ -1,12 +1,11 @@
-// src/apiRoutes.js
-import express from 'express';
+import express from "express";
 import {
   getAllArticles,
   getArticleById,
   getAllCategories,
   getArticlesByCategory,
-  addArticle
-} from './apiController.js';
+  addArticle,
+} from "./apiController.js";
 
 const router = express.Router();
 
