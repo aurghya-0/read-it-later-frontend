@@ -1,11 +1,11 @@
-import express from 'express';
+import express from "express";
 import {
   getAllArticles,
   getAllCategories,
   getArticlesByCategory,
   getArticleById,
-  addArticle
-} from './controller.js';
+  addArticle,
+} from "./controller.js";
 
 const router = express.Router();
 
@@ -15,5 +15,8 @@ router.get("/category/:category", getArticlesByCategory);
 router.get("/add-article", (req, res) => res.render("addArticle"));
 router.post("/add-article", addArticle);
 router.get("/article/:id", getArticleById);
+router.get("/login", (req, res) => {
+  res.render("login");
+});
 
 export default router;
