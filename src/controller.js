@@ -48,7 +48,7 @@ export const login = (req, res, next) => {
 };
 
 export const getAllArticles = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit to 10
+  const { page = 1, limit = 9 } = req.query; // Default to page 1 and limit to 10
 
   try {
     const offset = (page - 1) * limit;

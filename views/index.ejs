@@ -1,38 +1,68 @@
 <%- include('partials/header') %>
   <!-- Table Container -->
   <div class="container py-4">
-    <div class="table-responsive">
+    <div class="container">
       <script src="/socket.io/socket.io.js"></script>
-      <div class="d-flex align-items-center bg-primary text-white text-sm font-weight-bold px-3 py-2" role="alert">
-        <div id="status"></div>
+      <div class="alert alert-primary" role="alert" id="status" style="visibility: hidden"></div>
+
+      <div class="row">
+        <% articles.forEach(article => { %>
+              <div class="col-md-4 mb-4">
+                <div class="card shadow-sm article-card">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <a href="/article/<%= article.id %>" class="text-primary text-decoration-none"><%= article.title %></a>
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted"><%= article.classification %></h6>
+                    <p class="card-text"><%= article.article_summary %></p>
+                    <p class="card-text"><small class="text-info">By <%= article.author %></small></p>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
       </div>
-      <table class="table table-bordered bg-white shadow-sm">
-        <thead class="bg-dark text-white">
-          <tr>
-            <th class="py-2 px-3 border-bottom">Title</th>
-            <th class="py-2 px-3 border-bottom">Category</th>
-            <th class="py-2 px-3 border-bottom">Author</th>
-          </tr>
-        </thead>
-        <tbody id="articles-body">
-          <% articles.forEach(article => { %>
-            <tr class="border-bottom">
-              <td class="py-2 px-3"><a href="/article/<%= article.id %>" class="text-primary text-decoration-none"><%= article.title %></a></td>
-              <td class="py-2 px-3 text-primary"><%= article.classification %></td>
-              <td class="py-2 px-3 text-info"><%= article.author %></td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
     </div>
     <br/>
     <div class="d-flex justify-content-center py-3">
       <nav aria-label="Pagination">
         <ul class="pagination">
-          <% for (let i = 1; i <= totalPages; i++) { %>
-            <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-              <a href="?page=<%= i %>&limit=10" class="page-link">
+          <% if (parseInt(currentPage) > 1) { %>
+            <li class="page-item">
+              <a href="?page=<%= parseInt(currentPage) - 1 %>&limit=9" class="page-link" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          <% } %>
+
+          <%
+          // Set the range of pages to display
+          let maxPageLinks = 3; // Number of page links to show before and after the current page
+          let startPage = Math.max(1, parseInt(currentPage) - maxPageLinks);
+          let endPage = Math.min(parseInt(totalPages), parseInt(currentPage) + maxPageLinks);
+
+          // Adjust start and end if there are not enough pages before or after the current page
+          // If currentPage is near the start
+          // if (parseInt(currentPage) <= maxPageLinks) {
+          //   endPage = Math.min(parseInt(totalPages), maxPageLinks); // Show pages 1 to 6 if available
+          // }
+          // If currentPage is near the end
+          // if (parseInt(currentPage) >= parseInt(totalPages) - maxPageLinks) {
+          //   startPage = Math.max(1, parseInt(totalPages) - (maxPageLinks)); // Show last pages
+          // }
+
+          // Render the page numbers
+          for (let i = startPage; i <= endPage; i++) { %>
+            <li class="page-item <%= parseInt(currentPage) === i ? 'active' : '' %>">
+              <a href="?page=<%= i %>&limit=9" class="page-link">
                 <%= i %>
+              </a>
+            </li>
+          <% } %>
+
+          <% if (parseInt(currentPage) < parseInt(totalPages)) { %>
+            <li class="page-item">
+              <a href="?page=<%= parseInt(currentPage) + 1 %>&limit=9" class="page-link" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
           <% } %>
@@ -42,20 +72,24 @@
   </div>
     <script>
       const socket = io();
-
       socket.on('articleProcessing', (data) => {
           const statusDiv = document.getElementById('status');
           if (data.status === 'started') {
+              statusDiv.style.visibility = 'visible';
               statusDiv.innerHTML = `<p >Started processing article: ${data.articleLink}</p>`;
           } else if (data.status === 'completed') {
-              statusDiv.innerHTML = `<p>Completed processing article: ${data.articleLink}</p>`;
-              location.reload();
+            statusDiv.style.visibility = 'visible';
+            statusDiv.innerHTML = `<p>Completed processing article: ${data.articleLink}</p>`;
+            location.reload();
           }else if (data.status === 'database') {
-              statusDiv.innerHTML = `<p>Adding to database: ${data.articleLink}</p>`;
+            statusDiv.style.visibility = 'visible';
+            statusDiv.innerHTML = `<p>Adding to database: ${data.articleLink}</p>`;
           }else if (data.status === 'processing') {
-              statusDiv.innerHTML = `<p>Processing article: ${data.articleLink}</p>`;
+            statusDiv.style.visibility = 'visible';
+            statusDiv.innerHTML = `<p>Processing article: ${data.articleLink}</p>`;
           } else if (data.status === 'error') {
-              statusDiv.innerHTML = `<p>Error processing article: ${data.articleLink}. Error: ${data.error}</p>`;
+            statusDiv.style.visibility = 'visible';
+            statusDiv.innerHTML = `<p>Error processing article: ${data.articleLink}. Error: ${data.error}</p>`;
           }
       });
   </script>

@@ -5,15 +5,15 @@ table:not([class]) {
     margin-bottom: 16pt;
     border-collapse: collapse;
     width: 85%;
-  }
-  
-table:not([class]), 
-table:not([class]) th, 
+}
+
+table:not([class]),
+table:not([class]) th,
 table:not([class]) td {
     border: 1px solid black;
 }
 
-table:not([class]) th, 
+table:not([class]) th,
 table:not([class]) td {
     padding: 8px;
     text-align: left;
@@ -29,4 +29,15 @@ img:not([class]) {
 
 p:not([class]) {
     text-align: justify;
+}
+
+.article-card {
+    transition:
+        transform 0.3s,
+        box-shadow 0.3s;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }

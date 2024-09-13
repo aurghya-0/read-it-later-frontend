@@ -1,7 +1,7 @@
-import { DataTypes } from 'sequelize';
-import sequelize from './index.js';
+import { DataTypes } from "sequelize";
+import sequelize from "./index.js";
 
-const Article = sequelize.define('Article', {
+const Article = sequelize.define("Article", {
   title: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -21,6 +21,10 @@ const Article = sequelize.define('Article', {
   article_text: {
     type: DataTypes.TEXT,
     allowNull: false,
+  },
+  article_summary: {
+    type: DataTypes.TEXT,
+    allowNull: true,
   },
   article_link: {
     type: DataTypes.STRING,
