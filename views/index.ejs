@@ -1,61 +1,45 @@
 <%- include('partials/header') %>
   <!-- Table Container -->
-  <div class="container mx-auto p-6">
-    <div class="overflow-x-auto">
+  <div class="container py-4">
+    <div class="table-responsive">
       <script src="/socket.io/socket.io.js"></script>
-      <div class="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3" role="alert">
+      <div class="d-flex align-items-center bg-primary text-white text-sm font-weight-bold px-3 py-2" role="alert">
         <div id="status"></div>
       </div>
-      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-        <thead class="bg-gray-800 text-white">
+      <table class="table table-bordered bg-white shadow-sm">
+        <thead class="bg-dark text-white">
           <tr>
-            <th class="py-3 px-4 border-b">Title</th>
-            <th class="py-3 px-4 border-b">Category</th>
-            <th class="py-3 px-4 border-b">Author</th>
+            <th class="py-2 px-3 border-bottom">Title</th>
+            <th class="py-2 px-3 border-bottom">Category</th>
+            <th class="py-2 px-3 border-bottom">Author</th>
           </tr>
         </thead>
         <tbody id="articles-body">
           <% articles.forEach(article => { %>
-            <tr class="border-b">
-              <td class="py-3 px-4"><a href="/article/<%= article.id %>" class="text-blue-500 hover:underline"><%= article.title %></a></td>
-              <td class="py-3 px-4 text-blue-500"><%= article.classification %></td>
-              <td class="py-3 px-4 text-indigo-500"><%= article.author %></td>
+            <tr class="border-bottom">
+              <td class="py-2 px-3"><a href="/article/<%= article.id %>" class="text-primary text-decoration-none"><%= article.title %></a></td>
+              <td class="py-2 px-3 text-primary"><%= article.classification %></td>
+              <td class="py-2 px-3 text-info"><%= article.author %></td>
             </tr>
           <% }) %>
         </tbody>
       </table>
-      
     </div>
     <br/>
-    <div class="flex justify-center py-6">
+    <div class="d-flex justify-content-center py-3">
       <nav aria-label="Pagination">
-        <ul class="flex space-x-2">
-          <% if (currentPage > 1) { %>
-            <li>
-              <a href="?page=<%= currentPage - 1 %>&limit=10" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100 hover:text-gray-900" aria-label="Previous">
-                Previous
-              </a>
-            </li>
-          <% } %>
-    
+        <ul class="pagination">
           <% for (let i = 1; i <= totalPages; i++) { %>
-            <li>
-              <a href="?page=<%= i %>&limit=10" class="inline-flex items-center px-4 py-2 text-sm font-medium <%= currentPage == i ? 'text-white bg-blue-600' : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-900' %> rounded-md" aria-current="<%= currentPage == i ? 'page' : undefined %>">
+            <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+              <a href="?page=<%= i %>&limit=10" class="page-link">
                 <%= i %>
-              </a>
-            </li>
-          <% } %>
-    
-          <% if (currentPage < totalPages) { %>
-            <li>
-              <a href="?page=<%= currentPage + 1 %>&limit=10" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100 hover:text-gray-900" aria-label="Next">
-                Next
               </a>
             </li>
           <% } %>
         </ul>
       </nav>
     </div>
+  </div>
     <script>
       const socket = io();
 

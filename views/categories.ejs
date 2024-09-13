@@ -1,15 +1,24 @@
 <%- include('partials/header') %>
 
   <!-- Categories Container -->
-  <div class="container mx-auto p-6">
-    <div class="bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">Article Categories</h2>
-      <ul class="list-disc pl-5 space-y-2">
+  <div class="container py-4">
+    <div class="bg-white shadow-sm rounded p-4">
+      <h2 class="h4 font-weight-bold text-dark mb-4">Article Categories</h2>
+      <div class="row">
         <% categories.forEach(category => { %>
-          <li><a href="/category/<%= category %>" class="text-blue-500 hover:underline"><%= category %></a></li>
+          <div class="col-md-4 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <a href="/category/<%= category %>" class="text-primary text-decoration-none"><%= category %></a>
+                </h5>
+              </div>
+            </div>
+          </div>
         <% }) %>
-      </ul>
+      </div>
     </div>
   </div>
+
 
 <%- include('partials/footer') %>

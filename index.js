@@ -1,13 +1,16 @@
-import express from 'express';
-import path from 'path';
-import bodyParser from 'body-parser';
-import { fileURLToPath } from 'url';
-import routes from './src/routes.js';
-import apiRoutes from './src/apiRoutes.js';
-import sequelize from './src/models/index.js';
-import './src/articleProcessor.js';
-import http from 'http';
-import { initSocket } from './src/socket.js';
+import express from "express";
+import path from "path";
+import bodyParser from "body-parser";
+import { fileURLToPath } from "url";
+import routes from "./src/routes.js";
+import apiRoutes from "./src/apiRoutes.js";
+import sequelize from "./src/models/index.js";
+import "./src/articleProcessor.js";
+import http from "http";
+import passport from "passport";
+import "./src/passport.js";
+import { initSocket } from "./src/socket.js";
+import session from "express-session";
 
 sequelize.sync();
 
@@ -26,6 +29,16 @@ app.use((req, res, next) => {
   res.locals.currentRoute = req.path;
   next();
 });
+app.use(
+  session({
+    secret: "curious cat",
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use("/", routes);
 app.use("/api", apiRoutes);
 

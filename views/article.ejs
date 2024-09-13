@@ -1,21 +1,24 @@
 <%- include('partials/header') %>
-  <!-- Article Detail Container -->
-  <div class="container mx-auto p-6">
-    <div class="bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-3xl font-bold text-gray-800 mb-4"><%= article.title %></h2>
-      <p class="text-gray-600 mb-2">
-        <span class="font-semibold text-gray-700">Category:</span> <span class="text-blue-500"><%= article.classification %></span>
-      </p>
-      <p class="text-gray-600 mb-4">
-        <span class="font-semibold text-gray-700">Author:</span> <span class="text-indigo-500"><%= article.author %></span>
-      </p>
-      <p class="text-gray-600 mb-4"></p>
-        <span class="font-semibold text-gray-700">Publish Date:</span> <span class="text-indigo-500"><%= article.publish_date %></span>
-      </p>
-      <div class="prose">
-        <%- article.article_text %>
-      </div>
+<!-- Article Detail Container -->
+<div class="container py-4">
+  <div class="bg-white shadow-sm rounded p-4">
+    <h2 class="h3 font-weight-bold text-dark mb-4"><%= article.title %></h2>
+    <p class="text-muted mb-2">
+      <span class="font-weight-semibold text-dark">Category:</span>
+      <span class="text-primary"><%= article.classification %></span>
+    </p>
+    <p class="text-muted mb-4">
+      <span class="font-weight-semibold text-dark">Author:</span>
+      <span class="text-info"><%= article.author %></span>
+    </p>
+    <p class="text-muted mb-4">
+      <span class="font-weight-semibold text-dark">Publish Date:</span>
+      <span class="text-info"><%= article.publish_date %></span>
+    </p>
+    <div class="article-text">
+      <%- article.article_text %>
     </div>
   </div>
+</div>
 
 <%- include('partials/footer') %>

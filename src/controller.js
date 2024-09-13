@@ -1,6 +1,51 @@
 import Article from "./models/Article.js";
 import { formatDate } from "./utils.js";
 import articleQueue from "./queue.js";
+import User from "./models/User.js";
+import bcrypt from "bcrypt";
+import passport from "passport";
+import {} from "passport-local";
+
+export const signup = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists." });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(email);
+    console.log(password);
+    // Create a new user
+    const user = await User.create({ email, password: hashedPassword });
+    res.render("login");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error." });
+  }
+};
+
+export const login = (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.status(400).json({ message: info.message });
+    }
+    req.login(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      console.log(user);
+      return res.status(200).json({ message: "Login successful.", user });
+    });
+  })(req, res, next);
+};
 
 export const getAllArticles = async (req, res) => {
   const { page = 1, limit = 10 } = req.query; // Default to page 1 and limit to 10
@@ -44,14 +89,23 @@ export const getAllCategories = async (req, res) => {
 
 export const getArticlesByCategory = async (req, res) => {
   const category = req.params.category;
+  const { page = 1, limit = 10 } = req.query;
   try {
-    const articles = await Article.findAll({
+    const offset = (page - 1) * limit;
+    const articles = await Article.findAndCountAll({
       where: { classification: category },
+      limit: parseInt(limit),
+      offset: offset,
     });
-    articles.forEach((article) => {
+    const totalPages = Math.ceil(articles.count / limit);
+    articles.rows.forEach((article) => {
       article.publish_date = formatDate(article.publish_date);
     });
-    res.render("index", { articles });
+    res.render("index", {
+      articles: articles.rows,
+      totalPages,
+      currentPage: page,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving articles by category");
