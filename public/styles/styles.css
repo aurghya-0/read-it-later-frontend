@@ -41,3 +41,15 @@ p:not([class]) {
     transform: translateY(-5px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
+
+/* Set fixed height for the feeds sidebar */
+.feeds-list {
+    height: 80vh; /* Adjust the height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Set fixed height for the articles section */
+.articles-list {
+    height: 80vh; /* Adjust the height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}

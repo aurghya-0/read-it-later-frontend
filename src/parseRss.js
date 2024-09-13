@@ -39,18 +39,19 @@ const getArticlesFromLink = async (articleLink) => {
   } catch (error) {
     console.error("Error adding article:");
     console.error(error);
-    throw error;
+    // console.error(error.toString());
   }
 };
 
 let parser = new Parser();
 
-(async () => {
-  let feed = await parser.parseURL(
-    "https://www.thehindu.com/news/national/feeder/default.rss",
-  );
-
+export const parseRss = async (rssLink) => {
+  let feed = await parser.parseURL(rssLink);
+  let articles = [];
   feed.items.forEach(async (item) => {
-    await getArticlesFromLink(item.link);
+    articles.push(item);
+    //console.log(item);
+    // await getArticlesFromLink(item.link);
   });
-})();
+  return articles;
+};

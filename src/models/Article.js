@@ -29,6 +29,7 @@ const Article = sequelize.define("Article", {
   article_link: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
 });
 
