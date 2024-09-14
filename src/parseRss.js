@@ -39,7 +39,6 @@ const getArticlesFromLink = async (articleLink) => {
   } catch (error) {
     console.error("Error adding article:");
     console.error(error);
-    // console.error(error.toString());
   }
 };
 
@@ -50,8 +49,6 @@ export const parseRss = async (rssLink) => {
   let articles = [];
   feed.items.forEach(async (item) => {
     articles.push(item);
-    //console.log(item);
-    // await getArticlesFromLink(item.link);
   });
   return articles;
 };

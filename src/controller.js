@@ -5,13 +5,12 @@ import User from "./models/User.js";
 import Feed from "./models/Feed.js";
 import bcrypt from "bcrypt";
 import passport from "passport";
-import {} from "passport-local";
+import { } from "passport-local";
 import { parseRss } from "./parseRss.js";
 
 export const getAllFeeds = async (req, res) => {
   try {
     const feeds = await Feed.findAll();
-    console.log(feeds);
     res.render("feeds", { feeds, selectedFeed: null, articles: [] });
   } catch (err) {
     console.error(err);
@@ -24,7 +23,6 @@ export const getAllArticlesFromFeed = async (req, res) => {
     const feed = await Feed.findByPk(id);
     const feeds = await Feed.findAll();
     const articles = await parseRss(feed.link);
-    console.log(articles);
     res.render("feeds", { feeds, selectedFeed: feed, articles });
   } catch (err) {
     console.error(err);
