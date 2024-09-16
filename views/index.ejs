@@ -35,22 +35,9 @@
           <% } %>
 
           <%
-          // Set the range of pages to display
-          let maxPageLinks = 3; // Number of page links to show before and after the current page
+          let maxPageLinks = 3; 
           let startPage = Math.max(1, parseInt(currentPage) - maxPageLinks);
           let endPage = Math.min(parseInt(totalPages), parseInt(currentPage) + maxPageLinks);
-
-          // Adjust start and end if there are not enough pages before or after the current page
-          // If currentPage is near the start
-          // if (parseInt(currentPage) <= maxPageLinks) {
-          //   endPage = Math.min(parseInt(totalPages), maxPageLinks); // Show pages 1 to 6 if available
-          // }
-          // If currentPage is near the end
-          // if (parseInt(currentPage) >= parseInt(totalPages) - maxPageLinks) {
-          //   startPage = Math.max(1, parseInt(totalPages) - (maxPageLinks)); // Show last pages
-          // }
-
-          // Render the page numbers
           for (let i = startPage; i <= endPage; i++) { %>
             <li class="page-item <%= parseInt(currentPage) === i ? 'active' : '' %>">
               <a href="?page=<%= i %>&limit=9" class="page-link">
