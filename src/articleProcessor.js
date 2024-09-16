@@ -41,6 +41,7 @@ articleQueue.process(async (job) => {
       author: readArticle.siteName,
       publish_date: readArticle.publishedTime,
       article_text: openaiResponse.article_html,
+      article_summary: openaiResponse.article_summary,
       article_link: articleLink,
     });
 

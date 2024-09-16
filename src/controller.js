@@ -153,6 +153,7 @@ export const getArticleById = async (req, res) => {
   try {
     const article = await Article.findByPk(id);
     if (article) {
+      console.log(article);
       article.publish_date = formatDate(article.publish_date);
       res.render("article", { article });
     } else {
