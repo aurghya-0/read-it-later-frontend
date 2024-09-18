@@ -5,8 +5,6 @@ import {
   getArticlesByCategory,
   getArticleById,
   addArticle,
-  signup,
-  login,
   getAllFeeds,
   addFeed,
   getAllArticlesFromFeed,
@@ -23,13 +21,5 @@ router.get("/article/:id", getArticleById);
 router.get("/feeds", getAllFeeds);
 router.get("/feeds/:id", getAllArticlesFromFeed);
 router.post("/feeds", addFeed);
-router.get("/login", async (req, res) => {
-  res.render("login");
-});
-router.get("/signup", async (req, res) => {
-  res.render("signup");
-});
-router.post("/login", login);
-router.post("/signup", signup);
 
 export default router;

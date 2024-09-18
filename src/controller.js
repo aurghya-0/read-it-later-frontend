@@ -1,11 +1,7 @@
 import Article from "./models/Article.js";
 import { formatDate } from "./utils.js";
 import articleQueue from "./queue.js";
-import User from "./models/User.js";
 import Feed from "./models/Feed.js";
-import bcrypt from "bcrypt";
-import passport from "passport";
-import { } from "passport-local";
 import { parseRss } from "./parseRss.js";
 
 export const getAllFeeds = async (req, res) => {
@@ -40,47 +36,6 @@ export const addFeed = async (req, res) => {
   } catch (err) {
     console.error(err);
   }
-};
-
-export const signup = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Check if user already exists
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists." });
-    }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(email);
-    console.log(password);
-    // Create a new user
-    const user = await User.create({ email, password: hashedPassword });
-    res.render("login");
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error." });
-  }
-};
-
-export const login = (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.status(400).json({ message: info.message });
-    }
-    req.login(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-      console.log(user);
-      return res.status(200).json({ message: "Login successful.", user });
-    });
-  })(req, res, next);
 };
 
 export const getAllArticles = async (req, res) => {

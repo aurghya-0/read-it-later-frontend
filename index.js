@@ -7,17 +7,14 @@ import apiRoutes from "./src/apiRoutes.js";
 import sequelize from "./src/models/index.js";
 import "./src/articleProcessor.js";
 import http from "http";
-import passport from "passport";
-import "./src/passport.js";
 import { initSocket } from "./src/socket.js";
-import session from "express-session";
 
 sequelize.sync();
 
 const app = express();
 const server = http.createServer(app);
 initSocket(server);
-const port = 3000;
+const port = 3090;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -29,16 +26,6 @@ app.use((req, res, next) => {
   res.locals.currentRoute = req.path;
   next();
 });
-app.use(
-  session({
-    secret: "curious cat",
-    resave: false,
-    saveUninitialized: false,
-  }),
-);
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use("/", routes);
 app.use("/api", apiRoutes);
 
