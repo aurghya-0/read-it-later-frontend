@@ -8,7 +8,7 @@ import { JSDOM } from "jsdom";
 import { getSocketInstance } from "./socket.js";
 
 articleQueue.process(async (job) => {
-  const { articleLink } = job.data;
+  const { articleLink, userId } = job.data;
   const io = getSocketInstance();
 
   try {
@@ -43,6 +43,7 @@ articleQueue.process(async (job) => {
       article_text: openaiResponse.article_html,
       article_summary: openaiResponse.article_summary,
       article_link: articleLink,
+      userId: userId,
     });
 
     console.log(`${readArticle} added successfully`);

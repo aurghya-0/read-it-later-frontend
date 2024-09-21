@@ -32,7 +32,6 @@
         const data = await response.json();
         const messageDiv = document.getElementById('login-message');
         if (response.ok) {
-            localStorage.setItem('token', data.token);
             messageDiv.innerHTML = '<div class="alert alert-success">Login successful! Redirecting...</div>';
             setTimeout(() => window.location.href = '/feeds', 2000);
         } else {

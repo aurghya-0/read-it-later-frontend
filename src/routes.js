@@ -9,9 +9,11 @@ import {
   addFeed,
   getAllArticlesFromFeed,
   getLogin,
-  getRegister
+  getRegister,
+  register,
+  login
 } from "./controller.js";
-import { registerUser, verifyToken, loginUser } from "./authController.js";
+import { verifyToken } from "./authController.js";
 
 const router = express.Router();
 
@@ -26,31 +28,8 @@ router.get("/feeds/:id", verifyToken, getAllArticlesFromFeed);
 router.post("/feeds", verifyToken, addFeed);
 router.get("/login", getLogin);
 router.get("/register", getRegister);
-
-// Authentication Routes
-router.post("/register", async(req, res) => {
-  const {username, password} = req.body;
-  try {
-    const user = await registerUser(username, password);
-    res.status(201).json({
-      message: "user registered successfully", user
-    });
-  } catch (error) {
-    res.status(500).json({error: error.message});
-  }
-});
-
-// User Login
-router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  try {
-      const { user, token } = await loginUser(username, password);
-      res.cookie("jwt", token);
-      res.json({ message: 'Login successful', token });
-  } catch (err) {
-      res.status(401).json({ error: err.message });
-  }
-});
+router.post("/register", register);
+router.post('/login', login);
 
 
 
