@@ -23,7 +23,6 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "jsdom": "^25.0.0",
-    "jsonwebtoken": "^9.0.2",
     "node-fetch": "^3.3.2",
     "openai": "^4.57.1",
     "redis": "^4.7.0",
@@ -35,7 +34,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4",
-    "tailwindcss": "^3.4.10"
+    "nodemon": "^3.1.4"
   }
 }
