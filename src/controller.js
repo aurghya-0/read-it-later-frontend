@@ -1,8 +1,8 @@
 import Article from "./models/Article.js";
-import { formatDate } from "./utils.js";
-import articleQueue from "./queue.js";
+import { formatDate } from "./utils/utils.js";
+import articleQueue from "./utils/queue.js";
 import Feed from "./models/Feed.js";
-import { parseRss } from "./parseRss.js";
+import { parseRss } from "./utils/parseRss.js";
 import { loginUser, registerUser } from "./authController.js";
 
 export const logout = async (req, res) => {

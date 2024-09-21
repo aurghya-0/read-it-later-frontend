@@ -1,13 +1,12 @@
-import Article from "./models/Article.js";
+import Parser from "rss-parser";
 import * as cheerio from "cheerio";
 import { getArticle } from "./article.js";
+import Article from "../models/Article.js";
 import fetch from "node-fetch";
-import articleQueue from "./queue.js";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
 
-articleQueue.process(async (job) => {
-  const { articleLink, userId } = job.data;
+const getArticlesFromLink = async (articleLink) => {
   try {
     const response = await fetch(articleLink, {
       method: "GET",
@@ -25,20 +24,31 @@ articleQueue.process(async (job) => {
     const $ = cheerio.load(html);
     const dom = new JSDOM($.html());
     const readArticle = new Readability(dom.window.document).parse();
-    const openaiResponse = await getArticle(readArticle.content);
+    console.log(`Processing ${readArticle.title}`);
+    const article = await getArticle(readArticle.content);
     await Article.create({
       title: readArticle.title,
-      classification: openaiResponse.classification || "Untagged",
+      classification: article.classification || "Untagged",
       author: readArticle.siteName,
       publish_date: readArticle.publishedTime,
-      article_text: openaiResponse.article_html,
-      article_summary: openaiResponse.article_summary,
+      article_text: article.article_html,
+      article_summary: article.article_summary,
       article_link: articleLink,
-      userId: userId,
     });
+    console.log(`${readArticle.title} added to database.`);
   } catch (error) {
     console.error("Error adding article:");
     console.error(error);
-    throw error;
   }
-});
+};
+
+let parser = new Parser();
+
+export const parseRss = async (rssLink) => {
+  let feed = await parser.parseURL(rssLink);
+  let articles = [];
+  feed.items.forEach(async (item) => {
+    articles.push(item);
+  });
+  return articles;
+};

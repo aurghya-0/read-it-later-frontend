@@ -3,9 +3,8 @@ import path from "path";
 import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
 import routes from "./src/routes.js";
-import apiRoutes from "./src/apiRoutes.js";
 import sequelize from "./src/models/index.js";
-import "./src/articleProcessor.js";
+import "./src/utils/articleProcessor.js";
 import http from "http";
 import cookieParser from "cookie-parser";
 import session from "express-session";
@@ -56,7 +55,6 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/", routes);
-app.use("/api", apiRoutes);
 
 server.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
