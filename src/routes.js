@@ -11,13 +11,14 @@ import {
   getLogin,
   getRegister,
   register,
-  login
+  login,
+  logout,
 } from "./controller.js";
 import { verifyToken } from "./authController.js";
 
 const router = express.Router();
 
-router.get("/",verifyToken, getAllArticles);
+router.get("/", verifyToken, getAllArticles);
 router.get("/categories", verifyToken, getAllCategories);
 router.get("/category/:category", verifyToken, getArticlesByCategory);
 router.get("/add-article", verifyToken, (req, res) => res.render("addArticle"));
@@ -29,8 +30,7 @@ router.post("/feeds", verifyToken, addFeed);
 router.get("/login", getLogin);
 router.get("/register", getRegister);
 router.post("/register", register);
-router.post('/login', login);
-
-
+router.post("/login", login);
+router.get("/logout", logout);
 
 export default router;

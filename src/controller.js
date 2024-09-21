@@ -5,12 +5,21 @@ import Feed from "./models/Feed.js";
 import { parseRss } from "./parseRss.js";
 import { loginUser, registerUser } from "./authController.js";
 
+export const logout = async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  res.redirect("/login");
+};
+
 export const login = async (req, res) => {
   const { username, password } = req.body;
   try {
-    const token = await loginUser(username, password);
-    res.cookie("jwt", token);
-    res.json({ message: "Login successful", token });
+    const user = await loginUser(username, password);
+    req.session.user = user;
+    res.json({ message: "Login successful" });
   } catch (err) {
     res.status(401).json({ error: err.message });
   }
@@ -64,6 +73,7 @@ export const addFeed = async (req, res) => {
     await Feed.create({
       link: url,
       name: title,
+      userId: req.session.user.id,
     });
     res.redirect("/feeds");
   } catch (err) {
@@ -72,17 +82,17 @@ export const addFeed = async (req, res) => {
 };
 
 export const getAllArticles = async (req, res) => {
-  const { page = 1, limit = 9 } = req.query; // Default to page 1 and limit to 10
+  const { page = 1, limit = 9 } = req.query;
 
   try {
     const offset = (page - 1) * limit;
     const articles = await Article.findAndCountAll({
-      where: { userId: req.user.id },
-      limit: parseInt(limit), // Limit the number of articles per page
-      offset: offset, // Skip the articles for previous pages
+      where: { userId: req.session.user.id },
+      limit: parseInt(limit),
+      offset: offset,
     });
 
-    const totalPages = Math.ceil(articles.count / limit); // Calculate total pages
+    const totalPages = Math.ceil(articles.count / limit);
     articles.rows.forEach((article) => {
       article.publish_date = formatDate(article.publish_date);
     });
@@ -101,6 +111,7 @@ export const getAllArticles = async (req, res) => {
 export const getAllCategories = async (req, res) => {
   try {
     const articles = await Article.findAll({
+      where: { userId: req.session.user.id },
       attributes: ["classification"],
       group: ["classification"],
     });
@@ -119,7 +130,7 @@ export const getArticlesByCategory = async (req, res) => {
     const offset = (page - 1) * limit;
     const articles = await Article.findAndCountAll({
       where: {
-        userId: req.user.id,
+        userId: req.session.user.id,
         classification: category,
       },
       limit: parseInt(limit),
@@ -142,7 +153,7 @@ export const getArticlesByCategory = async (req, res) => {
 
 export const getArticleById = async (req, res) => {
   const id = req.params.id;
-  const userId = req.user.id;
+  const userId = req.session.user.id;
   try {
     const article = await Article.findByPk(id);
     if (article) {
@@ -163,7 +174,7 @@ export const getArticleById = async (req, res) => {
 
 export const addArticle = async (req, res) => {
   const articleLink = req.body.articleLink;
-  const userId = req.user.id;
+  const userId = req.session.user.id;
   try {
     // Add a job to the queue
     await articleQueue.add({ articleLink, userId });

@@ -1,8 +1,9 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "./models/User.js";
 
-const JWT_SECRET = "your_jwt_secret"; // Replace with your own secret
+const serializeUser = (user) => {
+  return { id: user.id, username: user.username };
+};
 
 export const registerUser = async (username, password) => {
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -14,22 +15,13 @@ export const loginUser = async (username, password) => {
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw new Error("Invalid credentials");
   }
-  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
-    expiresIn: "48h",
-  });
-  return token;
+  return serializeUser(user);
 };
 
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies?.jwt;
-  if (!token) {
-    return res.redirect("/login");
+  const user = req.session?.user;
+  if (user) {
+    return next();
   }
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.redirect("/login");
-    }
-    req.user = decoded;
-    next();
-  });
+  res.redirect("/login");
 };
