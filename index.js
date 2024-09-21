@@ -8,6 +8,7 @@ import sequelize from "./src/models/index.js";
 import "./src/articleProcessor.js";
 import http from "http";
 import { initSocket } from "./src/socket.js";
+import cookieParser from "cookie-parser";
 
 sequelize.sync();
 
@@ -20,12 +21,19 @@ const __dirname = path.dirname(__filename);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+// Middleware
+app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use((req, res, next) => {
   res.locals.currentRoute = req.path;
   next();
 });
+
+// Routes
 app.use("/", routes);
 app.use("/api", apiRoutes);
 

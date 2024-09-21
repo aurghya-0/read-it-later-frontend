@@ -4,6 +4,14 @@ import articleQueue from "./queue.js";
 import Feed from "./models/Feed.js";
 import { parseRss } from "./parseRss.js";
 
+export const getLogin = async (req, res) => {
+  res.render("login");
+};
+
+export const getRegister = async (req, res) => {
+  res.render("register");
+}
+
 export const getAllFeeds = async (req, res) => {
   try {
     const feeds = await Feed.findAll();

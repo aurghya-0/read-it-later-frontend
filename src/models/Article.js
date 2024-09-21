@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import User from "./User.js";
 import sequelize from "./index.js";
 
 const Article = sequelize.define("Article", {
@@ -31,6 +32,14 @@ const Article = sequelize.define("Article", {
     allowNull: false,
     unique: true,
   },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    },
+  }
 });
 
 export default Article;
