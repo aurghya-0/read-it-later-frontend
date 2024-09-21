@@ -33,7 +33,7 @@
         const messageDiv = document.getElementById('login-message');
         if (response.ok) {
             messageDiv.innerHTML = '<div class="alert alert-success">Login successful! Redirecting...</div>';
-            setTimeout(() => window.location.href = '/feeds', 2000);
+            setTimeout(() => window.location.href = '/', 1000);
         } else {
             messageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
         }
