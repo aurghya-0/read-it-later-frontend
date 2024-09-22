@@ -25,7 +25,9 @@ articleQueue.process(async (job) => {
     const $ = cheerio.load(html);
     const dom = new JSDOM($.html());
     const readArticle = new Readability(dom.window.document).parse();
+    console.log("Getting response from OpenAI");
     const openaiResponse = await getArticle(readArticle.content);
+    console.log("Adding article to database");
     await Article.create({
       title: readArticle.title,
       classification: openaiResponse.classification || "Untagged",
@@ -36,6 +38,7 @@ articleQueue.process(async (job) => {
       article_link: articleLink,
       userId: userId,
     });
+    console.log("Article added to database");
   } catch (error) {
     console.error("Error adding article:");
     console.error(error);

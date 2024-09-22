@@ -5,6 +5,7 @@ import {
   getArticlesByCategory,
   getArticleById,
   addArticle,
+  deleteArticleById,
   getAllFeeds,
   addFeed,
   getAllArticlesFromFeed,
@@ -24,6 +25,7 @@ router.get("/category/:category", verifyToken, getArticlesByCategory);
 router.get("/add-article", verifyToken, (req, res) => res.render("addArticle"));
 router.post("/add-article", verifyToken, addArticle);
 router.get("/article/:id", verifyToken, getArticleById);
+router.post("/article/delete/:id", verifyToken, deleteArticleById);
 router.get("/feeds", verifyToken, getAllFeeds);
 router.get("/feeds/:id", verifyToken, getAllArticlesFromFeed);
 router.post("/feeds", verifyToken, addFeed);

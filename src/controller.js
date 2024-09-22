@@ -1,9 +1,10 @@
 import Article from "./models/Article.js";
-import { formatDate } from "./utils/utils.js";
 import articleQueue from "./utils/queue.js";
 import Feed from "./models/Feed.js";
 import { parseRss } from "./utils/parseRss.js";
 import { loginUser, registerUser } from "./authController.js";
+
+
 
 export const logout = async (req, res) => {
   req.session.destroy((err) => {
@@ -93,10 +94,6 @@ export const getAllArticles = async (req, res) => {
     });
 
     const totalPages = Math.ceil(articles.count / limit);
-    articles.rows.forEach((article) => {
-      article.publish_date = formatDate(article.publish_date);
-    });
-
     res.render("index", {
       articles: articles.rows,
       totalPages,
@@ -137,9 +134,6 @@ export const getArticlesByCategory = async (req, res) => {
       offset: offset,
     });
     const totalPages = Math.ceil(articles.count / limit);
-    articles.rows.forEach((article) => {
-      article.publish_date = formatDate(article.publish_date);
-    });
     res.render("index", {
       articles: articles.rows,
       totalPages,
@@ -158,7 +152,6 @@ export const getArticleById = async (req, res) => {
     const article = await Article.findByPk(id);
     if (article) {
       if (article.userId == userId) {
-        article.publish_date = formatDate(article.publish_date);
         res.render("article", { article });
       } else {
         res.redirect("/");
@@ -176,12 +169,32 @@ export const addArticle = async (req, res) => {
   const articleLink = req.body.articleLink;
   const userId = req.session.user.id;
   try {
-    // Add a job to the queue
     await articleQueue.add({ articleLink, userId });
-
     res.redirect("/");
   } catch (error) {
     console.error("Error adding article:", error);
     res.status(500).send("Error adding article");
   }
 };
+
+
+export const deleteArticleById = async (req, res) => {
+  const id = req.params.id;
+  const userId = req.session.user.id;
+  try {
+    const article = await Article.findByPk(id);
+    if (article) {
+      if (article.userId == userId) {
+        await article.destroy();
+        res.status(200).send("Article deleted successfully");
+      } else {
+        res.status(404).send("Article not found");
+      }
+    } else {
+      res.status(404).send("Article not found");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting article");
+  }
+}
