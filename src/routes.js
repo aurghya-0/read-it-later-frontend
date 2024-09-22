@@ -28,9 +28,9 @@ router.get("/add-article", verifyToken, (req, res) =>
 router.post("/add-article", verifyToken, addArticle);
 router.get("/article/:id", verifyToken, getArticleById);
 router.post("/article/delete/:id", verifyToken, deleteArticleById);
-router.get("/feeds", verifyToken, getAllFeeds);
+// router.get("/feeds", verifyToken, getAllFeeds);
 router.get("/feeds/:id", verifyToken, getAllArticlesFromFeed);
-router.post("/feeds", verifyToken, addFeed);
+// router.post("/feeds", verifyToken, addFeed);
 router.get("/login", getLogin);
 router.get("/register", getRegister);
 router.post("/register", register);
