@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
+import cors from "cors";
 
 sequelize.sync();
 
@@ -35,6 +36,7 @@ app.set("views", path.join(__dirname, "views"));
 
 // Middleware
 app.use(express.json());
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   session({

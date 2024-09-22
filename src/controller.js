@@ -190,6 +190,21 @@ export const addArticle = async (req, res) => {
   }
 };
 
+export const addArticleAPI = async (req, res) => {
+  const articleLink = req.body.link; // Accessing the link sent from the popup.js
+  const userId = 1;
+
+  try {
+    await articleQueue.add({ articleLink, userId });
+    // Respond with a JSON object indicating success
+    res.status(200).json({ message: "Article added successfully!" });
+  } catch (error) {
+    console.error("Error adding article:", error);
+    // Respond with a JSON object indicating failure
+    res.status(500).json({ message: "Error adding article" });
+  }
+};
+
 export const deleteArticleById = async (req, res) => {
   const id = req.params.id;
   const userId = req.session.user.id;

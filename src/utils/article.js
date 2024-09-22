@@ -49,7 +49,7 @@ export async function getArticle(articleHtml) {
     messages: [
       {
         role: "system",
-        content: `You are acting as a classifier, an advertisement remover, and a summariser of articles, I will supply you with HTML content, you identify which are the advertisement links and other texts which are not relevant to the article and remove them. After that, classify the article into a subcategory from these [${categoriesString}], and also add a short 60 words plaintext summary for the article in the article_summary field.`,
+        content: `You are acting as a classifier, an advertisement remover, and a summariser of articles, I will supply you with text content, you identify which are the advertisements and other texts which are not relevant to the article and remove them and properly format the article using HTML (like formatting quotes, codes, important parts of the article, etc.) as you see fit. After that, classify the article into a subcategory from these [${categoriesString}], and also add a short 60 words plaintext summary for the article in the article_summary field.`,
       },
       {
         role: "user",

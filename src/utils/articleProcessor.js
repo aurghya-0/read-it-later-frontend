@@ -26,7 +26,7 @@ articleQueue.process(async (job) => {
     const dom = new JSDOM($.html());
     const readArticle = new Readability(dom.window.document).parse();
     console.log("Getting response from OpenAI");
-    const openaiResponse = await getArticle(readArticle.content);
+    const openaiResponse = await getArticle(readArticle.textContent);
     console.log("Adding article to database");
     await Article.create({
       title: readArticle.title,
