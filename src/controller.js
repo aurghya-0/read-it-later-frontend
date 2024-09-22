@@ -4,8 +4,6 @@ import Feed from "./models/Feed.js";
 import { parseRss } from "./utils/parseRss.js";
 import { loginUser, registerUser } from "./authController.js";
 
-
-
 export const logout = async (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -50,7 +48,12 @@ export const getRegister = async (req, res) => {
 export const getAllFeeds = async (req, res) => {
   try {
     const feeds = await Feed.findAll();
-    res.render("feeds", { feeds, selectedFeed: null, articles: [] });
+    res.render("feeds", {
+      feeds,
+      selectedFeed: null,
+      articles: [],
+      user: req.session.user,
+    });
   } catch (err) {
     console.error(err);
   }
@@ -62,7 +65,12 @@ export const getAllArticlesFromFeed = async (req, res) => {
     const feed = await Feed.findByPk(id);
     const feeds = await Feed.findAll();
     const articles = await parseRss(feed.link);
-    res.render("feeds", { feeds, selectedFeed: feed, articles });
+    res.render("feeds", {
+      feeds: feeds,
+      selectedFeed: feed,
+      articles: articles,
+      user: req.session.user,
+    });
   } catch (err) {
     console.error(err);
   }
@@ -98,6 +106,7 @@ export const getAllArticles = async (req, res) => {
       articles: articles.rows,
       totalPages,
       currentPage: page,
+      user: req.session.user,
     });
   } catch (err) {
     console.error(err);
@@ -113,7 +122,10 @@ export const getAllCategories = async (req, res) => {
       group: ["classification"],
     });
     const categories = articles.map((article) => article.classification);
-    res.render("categories", { categories });
+    res.render("categories", {
+      categories: categories,
+      user: req.session.user,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error retrieving categories");
@@ -138,6 +150,7 @@ export const getArticlesByCategory = async (req, res) => {
       articles: articles.rows,
       totalPages,
       currentPage: page,
+      user: req.session.user,
     });
   } catch (err) {
     console.error(err);
@@ -152,7 +165,7 @@ export const getArticleById = async (req, res) => {
     const article = await Article.findByPk(id);
     if (article) {
       if (article.userId == userId) {
-        res.render("article", { article });
+        res.render("article", { article: article, user: req.session.user });
       } else {
         res.redirect("/");
       }
@@ -177,7 +190,6 @@ export const addArticle = async (req, res) => {
   }
 };
 
-
 export const deleteArticleById = async (req, res) => {
   const id = req.params.id;
   const userId = req.session.user.id;
@@ -197,4 +209,4 @@ export const deleteArticleById = async (req, res) => {
     console.error(err);
     res.status(500).send("Error deleting article");
   }
-}
+};

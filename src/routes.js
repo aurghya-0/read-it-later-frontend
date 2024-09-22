@@ -22,7 +22,9 @@ const router = express.Router();
 router.get("/", verifyToken, getAllArticles);
 router.get("/categories", verifyToken, getAllCategories);
 router.get("/category/:category", verifyToken, getArticlesByCategory);
-router.get("/add-article", verifyToken, (req, res) => res.render("addArticle"));
+router.get("/add-article", verifyToken, (req, res) =>
+  res.render("addArticle", { user: req.session.user }),
+);
 router.post("/add-article", verifyToken, addArticle);
 router.get("/article/:id", verifyToken, getArticleById);
 router.post("/article/delete/:id", verifyToken, deleteArticleById);
