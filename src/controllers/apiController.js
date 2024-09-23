@@ -43,11 +43,9 @@ export const addArticleAPI = async (req, res) => {
   const userId = apiKeyInstance.userId;
   try {
     await articleQueue.add({ articleLink, userId });
-    // Respond with a JSON object indicating success
     res.status(200).json({ message: "Article added successfully!" });
   } catch (error) {
     console.error("Error adding article:", error);
-    // Respond with a JSON object indicating failure
     res.status(500).json({ message: "Error adding article" });
   }
 };

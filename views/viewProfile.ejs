@@ -11,8 +11,6 @@
 </head>
 
 <body class="bg-gray-100">
-
-  <!-- Header Section -->
   <nav class="navbar navbar-expand-lg py-3">
     <div class="container">
       <a class="navbar-brand h4 font-weight-bold mb-0" href="/"><b>Read It Later</b></a>
@@ -57,13 +55,12 @@
               <% apiKeys.forEach((keyObject, index) => { %>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
-                  <strong>API Key <%= index+1 %>:</strong> <span id="api-key-1"><%= keyObject.apiKey %></span><br>
+                  <strong>API Key <%= index+1 %>:</strong> <span id="api-key-1"><%= keyObject.keyName %></span><br>
                   <small>Status: <span class="badge bg-success">Active</span></small>
                 </div>
                 <button class="btn btn-secondary btn-sm">Regenerate</button>
               </li>
               <% }); %>
-              <!-- Add more API keys as needed -->
             </ul>
           </div>
         </div>
@@ -83,7 +80,6 @@
   </div>
 
   <script>
-      // Generate API key
       document.getElementById('generate-api-key').addEventListener('click', async () => {
         const apiKeyName = document.getElementById('api-key-name').value;
         const response = await fetch('/generate-api-key', {
@@ -103,7 +99,7 @@
           messageDiv.innerHTML = '<div class="alert alert-success">API key generated successfully!</div>';
         } else {
           messageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-          apiKeyDiv.innerHTML = ''; // Clear previous API key
+          apiKeyDiv.innerHTML = '';
         }
       });
     </script>
