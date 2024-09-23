@@ -1,19 +1,14 @@
-import Article from "./models/Article.js";
+import Article from "../models/Article.js";
 import * as cheerio from "cheerio";
 import { getArticle } from "./article.js";
 import fetch from "node-fetch";
 import articleQueue from "./queue.js";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
-import { getSocketInstance } from "./socket.js";
 
 articleQueue.process(async (job) => {
   const { articleLink, userId } = job.data;
-  const io = getSocketInstance();
-
   try {
-    console.log(`Processing Article from ${articleLink}`);
-    io.emit("articleProcessing", { status: "started", articleLink });
     const response = await fetch(articleLink, {
       method: "GET",
       headers: {
@@ -30,11 +25,9 @@ articleQueue.process(async (job) => {
     const $ = cheerio.load(html);
     const dom = new JSDOM($.html());
     const readArticle = new Readability(dom.window.document).parse();
-    io.emit("articleProcessing", { status: "processing", articleLink });
-    console.log(`Getting Result from OpenAI for: ${readArticle.title}`);
-    const openaiResponse = await getArticle(readArticle.content);
-    console.log(`Saving ${readArticle.title} to database.`);
-    io.emit("articleProcessing", { status: "database", articleLink });
+    console.log("Getting response from OpenAI");
+    const openaiResponse = await getArticle(readArticle.textContent);
+    console.log("Adding article to database");
     await Article.create({
       title: readArticle.title,
       classification: openaiResponse.classification || "Untagged",
@@ -45,9 +38,7 @@ articleQueue.process(async (job) => {
       article_link: articleLink,
       userId: userId,
     });
-
-    console.log(`${readArticle} added successfully`);
-    io.emit("articleProcessing", { status: "completed", articleLink });
+    console.log("Article added to database");
   } catch (error) {
     console.error("Error adding article:");
     console.error(error);
