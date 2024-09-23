@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Profile</title>
+  <title>Edit Profile</title>
   <link rel="stylesheet" href="/styles/styles.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -19,6 +19,9 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
+            <a class="nav-link" href="/profile">View Profile</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
           </li>
         </ul>
@@ -27,34 +30,28 @@
   </nav>
 
   <div class="container mt-5">
-    <h2 class="text-center mb-4">User Profile</h2>
+    <h2 class="text-center mb-4">Edit Profile</h2>
     <div class="row">
-      <div class="col-md-4">
-        <div class="card mb-4">
-          <div class="card-body text-center">
-            <h5 class="card-title">Profile Picture</h5>
-            <img src="/path/to/profile-pic.jpg" alt="Profile Picture" class="rounded-circle" style="width: 150px; height: 150px;">
-            <p class="card-text mt-2">Update your profile picture</p>
-            <input type="file" class="form-control-file" id="profile-pic-upload">
-          </div>
-        </div>
-      </div>
-      <div class="col-md-8">
+      <div class="col-md-8 offset-md-2">
         <div class="card mb-4">
           <div class="card-body">
-            <h5 class="card-title">User Information</h5>
-            <form id="profile-form">
+            <form id="edit-profile-form">
               <div class="form-group mb-3">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <input type="text" class="form-control" id="username" name="username" required readonly>
+              </div>
+              <div class="form-group mb-3">
+                <label for="full-name">Full Name</label>
+                <input type="text" class="form-control" id="full-name" name="full-name" required>
               </div>
               <div class="form-group mb-3">
                 <label for="email">Email</label>
                 <input type="email" class="form-control" id="email" name="email" required>
               </div>
               <div class="form-group mb-3">
-                <label for="bio">Bio</label>
-                <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
+                  <label for="phone">Phone Number</label>
+                  <input type="tel" class="form-control" id="phone" name="phone" required pattern="[0-9]{10}"
+                          title="Please enter a valid 10-digit phone number">
               </div>
               <button type="submit" class="btn btn-primary">Save Changes</button>
             </form>
@@ -66,9 +63,20 @@
   </div>
 
   <script>
-    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    // Example code to populate the current user information
+    document.addEventListener('DOMContentLoaded', async () => {
+      const response = await fetch('/get-user-info');
+      const userInfo = await response.json();
+
+      document.getElementById('username').value = userInfo.username;
+      document.getElementById('full-name').value = userInfo.fullName; // Full name
+      document.getElementById('email').value = userInfo.email;
+      document.getElementById('bio').value = userInfo.bio;
+    });
+
+    document.getElementById('edit-profile-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const username = document.getElementById('username').value;
+        const fullName = document.getElementById('full-name').value;
         const email = document.getElementById('email').value;
         const bio = document.getElementById('bio').value;
 
@@ -77,7 +85,7 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, email, bio }),
+            body: JSON.stringify({ fullName, email, bio }),
         });
 
         const data = await response.json();

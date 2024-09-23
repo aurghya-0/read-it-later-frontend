@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import User from "./models/User.js";
+import User from "../models/User.js";
 
 const serializeUser = (user) => {
   return { id: user.id, username: user.username };
@@ -18,7 +18,7 @@ export const loginUser = async (username, password) => {
   return serializeUser(user);
 };
 
-export const verifyToken = (req, res, next) => {
+export const isAuthenticated = (req, res, next) => {
   const user = req.session?.user;
   if (user) {
     return next();

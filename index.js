@@ -2,7 +2,10 @@ import express from "express";
 import path from "path";
 import bodyParser from "body-parser";
 import { fileURLToPath } from "url";
-import routes from "./src/routes.js";
+import articleRoutes from "./src/routes/articleRoutes.js";
+import authRoutes from "./src/routes/authRoutes.js";
+import userRoutes from "./src/routes/userRoutes.js";
+import apiRoutes from "./src/routes/apiRoutes.js";
 import sequelize from "./src/models/index.js";
 import "./src/utils/articleProcessor.js";
 import http from "http";
@@ -56,7 +59,10 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/", routes);
+app.use("/", articleRoutes);
+app.use("/", authRoutes);
+app.use("/", userRoutes);
+app.use("/", apiRoutes);
 
 server.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);

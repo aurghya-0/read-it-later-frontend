@@ -25,10 +25,6 @@ const APIKeys = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
-    expiresAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
   },
   { timestamps: true },
 );
