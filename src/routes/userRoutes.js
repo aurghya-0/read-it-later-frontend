@@ -1,12 +1,10 @@
 import express from "express";
+import {getUserProfile, getEditUserProfile} from "../controllers/userController.js";
+import {isAuthenticated} from "../services/authHandler.js"
 
 const router = express.Router();
 
-router.get("/profile", async (req, res) => {
-  res.render("viewProfile");
-});
-router.get("/profile/edit", async (req, res) => {
-  res.render("editProfile");
-});
+router.get("/profile", isAuthenticated, getUserProfile);
+router.get("/profile/edit", isAuthenticated, getEditUserProfile);
 
 export default router;

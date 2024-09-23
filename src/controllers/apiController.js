@@ -36,8 +36,12 @@ export const apiKeyGeneration = async (req, res) => {
 };
 
 export const addArticleAPI = async (req, res) => {
-  const articleLink = req.body.link; // Accessing the link sent from the popup.js
-  const userId = 1;
+  const articleLink = req.body.link;
+  const apiKey = req.body.apiKey;
+  const apiKeyInstance = await APIKeys.findOne({
+    where: {apiKey: apiKey}
+  });
+  const userId = apiKeyInstance.userId;
   try {
     console.log(articleLink);
     await articleQueue.add({ articleLink, userId });

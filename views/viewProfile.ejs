@@ -39,8 +39,8 @@
         <div class="card mb-4">
           <div class="card-body">
             <h5 class="card-title">User Information</h5>
-            <p><strong>Username:</strong> <span id="username">JohnDoe</span></p>
-            <p><strong>Email:</strong> <span id="email">johndoe@example.com</span></p>
+            <p><strong>Username:</strong> <span id="username"><%= userProfile.username %></span></p>
+            <p><strong>Email:</strong> <span id="email"><%= userProfile.email %></span></p>
             <p><strong>Phone Number:</strong> <span id="phone">+91 1234567890</span></p>
           </div>
         </div>
@@ -54,22 +54,15 @@
             <h5 class="card-title">API-s</h5>
             <p>Manage your API keys and access your API settings below.</p>
             <ul class="list-group">
+              <% apiKeys.forEach((keyObject, index) => { %>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
-                  <strong>API Key 1:</strong> <span id="api-key-1">abcd1234efgh5678</span><br>
-                  <small>Last Used: <span id="last-used-1">2024-09-20</span></small><br>
+                  <strong>API Key <%= index+1 %>:</strong> <span id="api-key-1"><%= keyObject.apiKey %></span><br>
                   <small>Status: <span class="badge bg-success">Active</span></small>
                 </div>
                 <button class="btn btn-secondary btn-sm">Regenerate</button>
               </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                  <strong>API Key 2:</strong> <span id="api-key-2">ijkl9012mnop3456</span><br>
-                  <small>Last Used: <span id="last-used-2">2024-09-15</span></small><br>
-                  <small>Status: <span class="badge bg-danger">Inactive</span></small>
-                </div>
-                <button class="btn btn-secondary btn-sm">Regenerate</button>
-              </li>
+              <% }); %>
               <!-- Add more API keys as needed -->
             </ul>
           </div>
