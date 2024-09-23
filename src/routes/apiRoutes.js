@@ -1,19 +1,11 @@
 import express from "express";
-import { addArticleAPI } from "../controllers/apiController.js";
-import { generateApiKey } from "../utils/utils.js";
+import { addArticleAPI, apiKeyGeneration, isAuthenticatedApi } from "../controllers/apiController.js";
 
 const router = express.Router();
 
 // Key Generation
-router.post("/generate-api-key", async (req, res) => {
-  const user = req.session.user;
-  if (!user) {
-    return res.json({ error: "Unauthorized access" });
-  }
-  res.json({
-    apiKey: generateApiKey(),
-  });
-});
+router.post("/generate-api-key", apiKeyGeneration);
 
-router.post("/api/add-article", addArticleAPI);
+router.post("/api/add-article", isAuthenticatedApi, addArticleAPI);
+
 export default router;

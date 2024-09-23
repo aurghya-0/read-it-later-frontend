@@ -1,32 +1,45 @@
 import articleQueue from "../utils/queue.js";
-import bcrypt from "bcrypt";
+import { randomBytes } from "crypto";
 import APIKeys from "../models/APIKeys.js";
 import { generateApiKey } from "../utils/utils.js";
 
-export const generateApiKey = async (req, res) => {
-  const secret = "my-secret-salt";
+export const isAuthenticatedApi = async (req, res, next) => {
+  const apiKey = req.body["apiKey"];
+  console.log(req.body["apiKey"]);
+  if (!apiKey) {
+    return res.json({ error: "Unauthorized access" });
+  }
+  const apiKeyInstance = await APIKeys.findOne({
+    where: {apiKey: apiKey}
+  });
+  console.log(apiKeyInstance);
+  if (!apiKeyInstance) {
+    return res.json({ error: "Unauthorized access" });
+  }
+  next();
+}
+
+export const apiKeyGeneration = async (req, res) => {
   const user = req.session.user;
   if (!user) {
     return res.json({ error: "Unauthorized access" });
   }
-  const rawApiKey = generateApiKey();
-  const hashedApiKey = await bcrypt.hash(rawApiKey, secret);
-  const newApiKey = await APIKeys.create({
+  const createdKey = await APIKeys.create({
     userId: user.id,
-    apiKey: hashedApiKey,
+    apiKey: randomBytes(16).toString("hex"),
     exiresAt: null,
   });
-  
+  console.log(createdKey.dataValues.apiKey);
   res.json({
-    apiKey: generateApiKey(),
+    apiKey: createdKey.dataValues.apiKey,
   });
 };
 
 export const addArticleAPI = async (req, res) => {
   const articleLink = req.body.link; // Accessing the link sent from the popup.js
   const userId = 1;
-
   try {
+    console.log(articleLink);
     await articleQueue.add({ articleLink, userId });
     // Respond with a JSON object indicating success
     res.status(200).json({ message: "Article added successfully!" });

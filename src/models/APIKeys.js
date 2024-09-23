@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import User from "./User";
+import User from "./User.js";
 import sequelize from "./index.js";
 
 const APIKeys = sequelize.define(
@@ -19,7 +19,7 @@ const APIKeys = sequelize.define(
     },
     expiresAt: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
