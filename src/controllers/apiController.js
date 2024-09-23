@@ -1,18 +1,15 @@
 import articleQueue from "../utils/queue.js";
 import { randomBytes } from "crypto";
 import APIKeys from "../models/APIKeys.js";
-import { generateApiKey } from "../utils/utils.js";
 
 export const isAuthenticatedApi = async (req, res, next) => {
   const apiKey = req.body["apiKey"];
-  console.log(req.body["apiKey"]);
   if (!apiKey) {
     return res.json({ error: "Unauthorized access" });
   }
   const apiKeyInstance = await APIKeys.findOne({
     where: {apiKey: apiKey}
   });
-  console.log(apiKeyInstance);
   if (!apiKeyInstance) {
     return res.json({ error: "Unauthorized access" });
   }
@@ -29,7 +26,6 @@ export const apiKeyGeneration = async (req, res) => {
     apiKey: randomBytes(16).toString("hex"),
     exiresAt: null,
   });
-  console.log(createdKey.dataValues.apiKey);
   res.json({
     apiKey: createdKey.dataValues.apiKey,
   });
@@ -43,7 +39,6 @@ export const addArticleAPI = async (req, res) => {
   });
   const userId = apiKeyInstance.userId;
   try {
-    console.log(articleLink);
     await articleQueue.add({ articleLink, userId });
     // Respond with a JSON object indicating success
     res.status(200).json({ message: "Article added successfully!" });

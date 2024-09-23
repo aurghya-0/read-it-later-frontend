@@ -37,3 +37,4 @@ export const saveUserProfile = async (req, res) => {
     await User.update({ name, email }, { where: { id: user.id } });
     res.redirect("/profile");
 }
+

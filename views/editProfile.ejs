@@ -35,18 +35,18 @@
       <div class="col-md-8 offset-md-2">
         <div class="card mb-4">
           <div class="card-body">
-            <form id="edit-profile-form">
+            <form id="edit-profile-form", method="post", target="/profile/edit">
               <div class="form-group mb-3">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required readonly>
+                <input type="text" class="form-control" id="username" name="username" value="<%= userProfile.username %>" required readonly>
               </div>
               <div class="form-group mb-3">
                 <label for="full-name">Full Name</label>
-                <input type="text" class="form-control" id="full-name" name="full-name" required>
+                <input type="text" class="form-control" id="full-name" name="name" value="<%= userProfile.name %>" required>
               </div>
               <div class="form-group mb-3">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email" class="form-control" id="email" name="email" value="<%= userProfile.email %>" required>
               </div>
               <div class="form-group mb-3">
                   <label for="phone">Phone Number</label>
@@ -61,42 +61,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-    // Example code to populate the current user information
-    document.addEventListener('DOMContentLoaded', async () => {
-      const response = await fetch('/get-user-info');
-      const userInfo = await response.json();
-
-      document.getElementById('username').value = userInfo.username;
-      document.getElementById('full-name').value = userInfo.fullName; // Full name
-      document.getElementById('email').value = userInfo.email;
-      document.getElementById('bio').value = userInfo.bio;
-    });
-
-    document.getElementById('edit-profile-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const fullName = document.getElementById('full-name').value;
-        const email = document.getElementById('email').value;
-        const bio = document.getElementById('bio').value;
-
-        const response = await fetch('/update-profile', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ fullName, email, bio }),
-        });
-
-        const data = await response.json();
-        const messageDiv = document.getElementById('profile-message');
-        if (response.ok) {
-            messageDiv.innerHTML = '<div class="alert alert-success">Profile updated successfully!</div>';
-        } else {
-            messageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-        }
-    });
-  </script>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
