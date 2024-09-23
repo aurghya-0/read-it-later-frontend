@@ -42,7 +42,6 @@
             <p><strong>Full Name:</strong> <span id="username"><%= userProfile.name %></span></p>
             <p><strong>Username:</strong> <span id="username"><%= userProfile.username %></span></p>
             <p><strong>Email:</strong> <span id="email"><%= userProfile.email %></span></p>
-            <!-- <p><strong>Phone Number:</strong> <span id="phone"><%= userProfile.phone %></span></p> -->
           </div>
         </div>
       </div>
@@ -71,6 +70,8 @@
         <div class="card mb-4">
           <div class="card-body text-center">
             <h4 class="card-title">API Key Management</h4>
+            <p class="card-text">Enter a name for your new API key:</p>
+            <input type="text" id="api-key-name" class="form-control mb-3" placeholder="Enter API Key Name" required />
             <p class="card-text">Click the button below to generate a new API key.</p>
             <button id="generate-api-key" class="btn btn-primary">Generate API Key</button>
             <div id="api-key-message" class="mt-3"></div>
@@ -84,11 +85,13 @@
   <script>
       // Generate API key
       document.getElementById('generate-api-key').addEventListener('click', async () => {
+        const apiKeyName = document.getElementById('api-key-name').value;
         const response = await fetch('/generate-api-key', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({ keyName: apiKeyName }),
         });
 
         const data = await response.json();

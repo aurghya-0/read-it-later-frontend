@@ -17,6 +17,7 @@ export const isAuthenticatedApi = async (req, res, next) => {
 }
 
 export const apiKeyGeneration = async (req, res) => {
+  const keyName = req.body.keyName;
   const user = req.session.user;
   if (!user) {
     return res.json({ error: "Unauthorized access" });
@@ -24,6 +25,7 @@ export const apiKeyGeneration = async (req, res) => {
   const createdKey = await APIKeys.create({
     userId: user.id,
     apiKey: randomBytes(16).toString("hex"),
+    keyName: keyName,
     exiresAt: null,
   });
   res.json({
@@ -32,6 +34,7 @@ export const apiKeyGeneration = async (req, res) => {
 };
 
 export const addArticleAPI = async (req, res) => {
+  console.log(req.body);
   const articleLink = req.body.link;
   const apiKey = req.body.apiKey;
   const apiKeyInstance = await APIKeys.findOne({

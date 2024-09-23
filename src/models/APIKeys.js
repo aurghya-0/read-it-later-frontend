@@ -17,6 +17,10 @@ const APIKeys = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    keyName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     expiresAt: {
       type: DataTypes.DATE,
       allowNull: true,
