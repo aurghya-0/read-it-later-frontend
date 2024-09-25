@@ -1,6 +1,7 @@
 import articleQueue from "../utils/queue.js";
 import { randomBytes } from "crypto";
 import APIKeys from "../models/APIKeys.js";
+import Article from "../models/Article.js";
 
 export const isAuthenticatedApi = async (req, res, next) => {
   const apiKey = req.body["apiKey"];
@@ -8,13 +9,13 @@ export const isAuthenticatedApi = async (req, res, next) => {
     return res.json({ error: "Unauthorized access" });
   }
   const apiKeyInstance = await APIKeys.findOne({
-    where: {apiKey: apiKey}
+    where: { apiKey: apiKey },
   });
   if (!apiKeyInstance) {
     return res.json({ error: "Unauthorized access" });
   }
   next();
-}
+};
 
 export const apiKeyGeneration = async (req, res) => {
   const keyName = req.body.keyName;
@@ -38,7 +39,7 @@ export const addArticleAPI = async (req, res) => {
   const articleLink = req.body.link;
   const apiKey = req.body.apiKey;
   const apiKeyInstance = await APIKeys.findOne({
-    where: {apiKey: apiKey}
+    where: { apiKey: apiKey },
   });
   const userId = apiKeyInstance.userId;
   try {
@@ -48,4 +49,43 @@ export const addArticleAPI = async (req, res) => {
     console.error("Error adding article:", error);
     res.status(500).json({ message: "Error adding article" });
   }
+};
+
+// implement error checking
+export const getAllArticles = async (req, res) => {
+  const apiKey = req.body.apiKey;
+  if (!apiKey) {
+    return res.json({ error: "Unauthorized access" });
+  }
+  const apiKeyInstance = await APIKeys.findOne({
+    where: { apiKey: apiKey },
+  });
+  if (!apiKeyInstance) {
+    return res.json({ error: "Unauthorized access" });
+  }
+  const userId = apiKeyInstance.userId;
+  const articles = await Article.findAll({
+    where: { userId: userId },
+  });
+  res.status(200).json(articles);
+};
+
+// implement error checking
+export const getArticle = async (req, res) => {
+  const apiKey = req.body.apiKey;
+  if (!apiKey) {
+    return res.json({ error: "Unauthorized access" });
+  }
+  const apiKeyInstance = await APIKeys.findOne({
+    where: { apiKey: apiKey },
+  });
+  if (!apiKeyInstance) {
+    return res.json({ error: "Unauthorized access" });
+  }
+  const userId = apiKeyInstance.userId;
+  const articleId = req.body.articleId;
+  const article = await Article.findOne({
+    where: { id: articleId, userId: userId },
+  });
+  res.status(200).json(article);
 };
