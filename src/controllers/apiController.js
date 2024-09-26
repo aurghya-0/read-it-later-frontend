@@ -25,7 +25,6 @@ export const isAuthenticatedApi = async (req, res, next) => {
   next();
 };
 
-// Only api which relies on session based authentication
 export const apiKeyGeneration = async (req, res) => {
   const keyName = req.body.keyName;
   const user = req.session.user;
