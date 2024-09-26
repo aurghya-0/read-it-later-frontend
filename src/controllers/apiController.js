@@ -164,7 +164,7 @@ export const getArticlesByCategory = async (req, res) => {
     return res.json({ error: "Unauthorized access" });
   }
   const userId = apiKeyInstance.userId;
-  const { offset = 0, limit = 10, category } = req.query;
+  const { offset = 0, limit = 10 } = req.query;
   try{
     const articles = await Article.findAndCountAll({
       where: {
