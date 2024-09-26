@@ -17,6 +17,7 @@ export const isAuthenticatedApi = async (req, res, next) => {
   next();
 };
 
+// Only api which relies on session based authentication
 export const apiKeyGeneration = async (req, res) => {
   const keyName = req.body.keyName;
   const user = req.session.user;
@@ -35,12 +36,17 @@ export const apiKeyGeneration = async (req, res) => {
 };
 
 export const addArticleAPI = async (req, res) => {
-  console.log(req.body);
   const articleLink = req.body.link;
   const apiKey = req.body.apiKey;
+  if (!apiKey) {
+    return res.json({ message: "Error Unauthorized access" });
+  }
   const apiKeyInstance = await APIKeys.findOne({
     where: { apiKey: apiKey },
   });
+  if (!apiKeyInstance) {
+    return res.json({ message: "Error Unauthorized access" });
+  }
   const userId = apiKeyInstance.userId;
   try {
     await articleQueue.add({ articleLink, userId });
@@ -51,7 +57,6 @@ export const addArticleAPI = async (req, res) => {
   }
 };
 
-// implement error checking
 export const getAllArticles = async (req, res) => {
   const apiKey = req.body.apiKey;
   if (!apiKey) {
@@ -70,7 +75,6 @@ export const getAllArticles = async (req, res) => {
   res.status(200).json(articles);
 };
 
-// implement error checking
 export const getArticle = async (req, res) => {
   const apiKey = req.body.apiKey;
   if (!apiKey) {
