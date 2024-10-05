@@ -1,18 +1,13 @@
-import User from "../models/User.js";
-import APIKeys from "../models/APIKeys.js";
+import User from "../models/UserM.js";
+import APIKeys from "../models/APIKeysM.js";
 
 export const getUserProfile = async (req, res) => {
     const user = req.session.user;
     if (!user) {
         return res.json({ error: "Unauthorized access" });
     }
-    const userProfile = await User.findOne({
-        where: { id: user.id },
-        attributes: { exclude: ["password"] },
-    });
-    const apiKeys = await APIKeys.findAll({
-        where: { userId: user.id },
-    });
+    const userProfile = await User.findById(user.id).select("-password");
+    const apiKeys = await APIKeys.find({ userId: user.id });
     res.render("viewProfile", { userProfile, apiKeys });
 };
 
@@ -21,10 +16,7 @@ export const getEditUserProfile = async (req, res) => {
     if (!user) {
         return res.json({ error: "Unauthorized access" });
     }
-    const userProfile = await User.findOne({
-        where: { id: user.id },
-        attributes: { exclude: ["password"] },
-    });
+    const userProfile = await User.findById(user.id).select("-password");
     res.render("editProfile", { userProfile });
 }
 
@@ -34,7 +26,6 @@ export const saveUserProfile = async (req, res) => {
         return res.json({ error: "Unauthorized access" });
     }
     const { name, email } = req.body;
-    await User.update({ name, email }, { where: { id: user.id } });
+    await User.findByIdAndUpdate(user.id, { name, email });
     res.redirect("/profile");
 }
-

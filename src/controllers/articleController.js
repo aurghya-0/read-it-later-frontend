@@ -1,4 +1,4 @@
-import Article from "../models/Article.js";
+import Article from "../models/ArticleM.js";
 import articleQueue from "../utils/queue.js";
 
 export const getAllArticles = async (req, res) => {
@@ -6,15 +6,14 @@ export const getAllArticles = async (req, res) => {
 
   try {
     const offset = (page - 1) * limit;
-    const articles = await Article.findAndCountAll({
-      where: { userId: req.session.user.id },
-      limit: parseInt(limit),
-      offset: offset,
-    });
+    const articles = await Article.find({ userId: req.session.user.id })
+      .skip(offset)
+      .limit(parseInt(limit));
 
-    const totalPages = Math.ceil(articles.count / limit);
+    const count = await Article.countDocuments({ userId: req.session.user.id });
+    const totalPages = Math.ceil(count / limit);
     res.render("index", {
-      articles: articles.rows,
+      articles: articles,
       totalPages,
       currentPage: page,
       user: req.session.user,
@@ -27,12 +26,11 @@ export const getAllArticles = async (req, res) => {
 
 export const getAllCategories = async (req, res) => {
   try {
-    const articles = await Article.findAll({
-      where: { userId: req.session.user.id },
-      attributes: ["classification"],
-      group: ["classification"],
-    });
-    const categories = articles.map((article) => article.classification);
+    const articles = await Article.aggregate([
+      { $match: { userId: req.session.user.id } },
+      { $group: { _id: "$classification" } },
+    ]);
+    const categories = articles.map((article) => article._id);
     res.render("categories", {
       categories: categories,
       user: req.session.user,
@@ -48,17 +46,20 @@ export const getArticlesByCategory = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   try {
     const offset = (page - 1) * limit;
-    const articles = await Article.findAndCountAll({
-      where: {
-        userId: req.session.user.id,
-        classification: category,
-      },
-      limit: parseInt(limit),
-      offset: offset,
+    const articles = await Article.find({
+      userId: req.session.user.id,
+      classification: category,
+    })
+      .skip(offset)
+      .limit(parseInt(limit));
+
+    const count = await Article.countDocuments({
+      userId: req.session.user.id,
+      classification: category,
     });
-    const totalPages = Math.ceil(articles.count / limit);
+    const totalPages = Math.ceil(count / limit);
     res.render("index", {
-      articles: articles.rows,
+      articles: articles,
       totalPages,
       currentPage: page,
       user: req.session.user,
@@ -73,7 +74,7 @@ export const getArticleById = async (req, res) => {
   const id = req.params.id;
   const userId = req.session.user.id;
   try {
-    const article = await Article.findByPk(id);
+    const article = await Article.findById(id);
     if (article) {
       if (article.userId == userId) {
         res.render("article", { article: article, user: req.session.user });
@@ -105,10 +106,10 @@ export const deleteArticleById = async (req, res) => {
   const id = req.params.id;
   const userId = req.session.user.id;
   try {
-    const article = await Article.findByPk(id);
+    const article = await Article.findById(id);
     if (article) {
       if (article.userId == userId) {
-        await article.destroy();
+        await article.remove();
         res.status(200).send("Article deleted successfully");
       } else {
         res.status(404).send("Article not found");

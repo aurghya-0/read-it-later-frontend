@@ -1,7 +1,4 @@
 import { Sequelize } from 'sequelize';
-import User from './User.js';
-import Article from './Article.js';
-// import './association.js';
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',

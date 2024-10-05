@@ -7,6 +7,7 @@ import authRoutes from "./src/routes/authRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import apiRoutes from "./src/routes/apiRoutes.js";
 import sequelize from "./src/models/index.js";
+import mongoose from "./src/models/dbConnection.js";
 import "./src/utils/articleProcessor.js";
 import http from "http";
 import cookieParser from "cookie-parser";
